@@ -3,17 +3,24 @@ package me.hellonayeon.crdt.sequence;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class Sequence {
+
+    static final AtomicLong idCounter = new AtomicLong();
 
     List<Element> elems = new ArrayList<>();
     List<Long> rmIds = new ArrayList<>();
     List<Long> idSeq = new ArrayList<>();
     List<String> valueSeq = new ArrayList<>();
 
-    Long id;
+    String id;
 
-    private void updateSeq() {
+    public Sequence(String id) {
+        this.id = id;
+    }
+
+    public void updateSeq() {
         for (Element elem : elems) {
             Long id = elem.getId();
             if (!rmIds.contains(id) && !idSeq.contains(id)) {
@@ -46,17 +53,17 @@ public class Sequence {
         }
     }
 
-    private void add(String value, Long id) {
+    public void add(String value, Long id) {
         SequenceFunction.add(elems, value, id);
         updateSeq();
     }
 
-    private void remove(Long id) {
+    public void remove(Long id) {
         SequenceFunction.remove(rmIds, id);
         updateSeq();
     }
 
-    private boolean query(Long id) {
+    public boolean query(Long id) {
         for (Element elem : elems) {
             if (elem.getId().equals(id)) {
                 return !rmIds.contains(id);
@@ -65,19 +72,20 @@ public class Sequence {
         return false;
     }
 
-    private void merge(Sequence sequence) {
+    public void merge(Sequence sequence) {
         SequenceFunction.merge(elems, sequence.elems);
+        SequenceFunction.mergeRmIds(rmIds, sequence.rmIds);
         updateSeq();
     }
 
-    private void display() {
+    public void display() {
         SequenceFunction.display("elem list", elems.toString());
         SequenceFunction.display("remove id list", rmIds.toString());
         SequenceFunction.display("id seq", idSeq.toString());
         SequenceFunction.display("elem seq", valueSeq.toString());
     }
 
-    private String getSeq() {
+    public String getSeq() {
         return SequenceFunction.getSeq(valueSeq);
     }
 }

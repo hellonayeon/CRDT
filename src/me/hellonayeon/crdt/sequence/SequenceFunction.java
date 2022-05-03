@@ -23,6 +23,14 @@ public class SequenceFunction {
         }
     }
 
+    public static void mergeRmIds(List<Long> rmIds1, List<Long> rmIds2) {
+        for (Long id : rmIds2) {
+            if (!rmIds1.contains(id)) {
+                rmIds1.add(id);
+            }
+        }
+    }
+
     public static void display(String tag, String data) {
         System.out.printf("%-20s%s%n", tag, data);
     }
